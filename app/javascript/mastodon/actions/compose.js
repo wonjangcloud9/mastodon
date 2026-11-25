@@ -505,7 +505,12 @@ export function undoUploadCompose(media_id) {
 }
 
 export function clearComposeSuggestions() {
+  // Drop the throttled trailing calls too, or one fires after the clear
+  // with the old token and reopens the suggestions.
+  fetchComposeSuggestionsAccounts.cancel();
+  fetchComposeSuggestionsTags.cancel();
   fetchComposeSuggestionsAccountsController?.abort();
+  fetchComposeSuggestionsTagsController?.abort();
   searchComposeSuggestionsEmojiController?.abort();
   return {
     type: COMPOSE_SUGGESTIONS_CLEAR,
